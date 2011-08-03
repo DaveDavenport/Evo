@@ -6,8 +6,8 @@ VALA_SOURCES=\
 		DNA.Strain.vala
 
 VALAC=valac
-VALAC_FLAGS=--pkg=libxml-2.0 --pkg=gdk-pixbuf-2.0 
+VALAC_FLAGS=--pkg=libxml-2.0 --pkg=gdk-pixbuf-2.0 -X "-O3" -X "--fast-math"
 PROGRAM=evo
 
-$(PROGRAM): $(VALA_SOURCES)
-	$(VALAC) $(VALAC_FLAGS) $^ -o $@
+$(PROGRAM): $(VALA_SOURCES) Makefile
+	$(VALAC) $(VALAC_FLAGS) $(VALA_SOURCES) -o $@
