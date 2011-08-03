@@ -1,0 +1,13 @@
+VALA_SOURCES=\
+		test.vala\
+		DNA.Point.vala\
+		DNA.Polygon.vala\
+		DNA.Brush.vala\
+		DNA.Strain.vala
+
+VALAC=valac
+VALAC_FLAGS=--pkg=libxml-2.0 --pkg=gdk-pixbuf-2.0 
+PROGRAM=evo
+
+$(PROGRAM): $(VALA_SOURCES)
+	$(VALAC) $(VALAC_FLAGS) $^ -o $@
