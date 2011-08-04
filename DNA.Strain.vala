@@ -9,6 +9,7 @@ namespace DNA
     public class Strain
     {
         public double fitness = 0;
+        public uint generation = 0;
         /* posibilities */
         private const int mutation_pos_add = 200;
         private const int mutation_pos_remove = 1500;
@@ -114,13 +115,14 @@ namespace DNA
             GLib.debug("Points: %u\n", points);
         }
 
-        public void store_xml(string xml_file)
+        public void store_xml(string xml_file, uint generation)
         {
             Xml.Doc doc = new Xml.Doc(null);
             Xml.Node *root = new Xml.Node(null, "strain");
             Xml.Node *fitn = new Xml.Node(null, "fitness");
+            Xml.Node *genr = new Xml.Node(null, "generation");
             fitn->set_content("%f".printf(fitness));
-
+            genr->set_content("%f".printf(generation));
             foreach(unowned Polygon p in polygons)
             {
                 p.store_xml(root);
@@ -148,6 +150,9 @@ namespace DNA
                 else if (iter->name == "fitness")
                 {
                     fitness = double.parse(iter->get_content());
+                }else if (iter->name == "generation")
+                {
+                    generation = (uint)int.parse(iter->get_content());
                 }
             }
             polygons.reverse();

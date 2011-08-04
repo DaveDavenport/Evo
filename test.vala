@@ -84,12 +84,12 @@ namespace DNA
                     g = ((int)pixels[pos_src+1]-(int)pixels_data[pos_dst+1]);
                     //b
                     b = ((int)pixels[pos_src+2]-(int)pixels_data[pos_dst+2]);
-                    diff += g.abs();
-                    diff += r.abs();
-                    diff += b.abs();
+                    diff += g*g;
+                    diff += r*r;
+                    diff += b*b;
                 }
             }
-            str.fitness = diff/(3*width*height*255.0);
+            str.fitness = diff/(3*width*height*255.0*255.0);
         }
     }
 }
@@ -144,6 +144,7 @@ int main ( string[] argv)
     if(initial_xml != null) {
         str = new DNA.Strain.from_file(initial_xml);
         old_fitness = str.fitness;
+        iter = str.generation;
         PPM.Write(str, "xmlinput.ppm", 800,800);
     }else{
         str = new DNA.Strain();
@@ -168,7 +169,7 @@ int main ( string[] argv)
             iter++;
             if(iter % 100 == 0)
             {   
-            	str.store_xml("test%08lu.xml".printf(iter));
+            	str.store_xml("test%08lu.xml".printf(iter), iter);
 				PPM.Write(str, "test%08lu.ppm".printf(iter), 800,800);
                 GLib.debug("Write file: test%08lu.png".printf(iter));
                 GLib.debug("Write res: %llu fittn: %f\n", generation, old_fitness);
@@ -188,7 +189,7 @@ int main ( string[] argv)
     }while(old_fitness > 0.0001);
     
     /* We are done */
-	str.store_xml("test%08lu.xml".printf(iter));
+	str.store_xml("test%08lu.xml".printf(iter),iter);
 	PPM.Write(str, "test%08lu.ppm".printf(iter), 800,800);
 
     str.print();
