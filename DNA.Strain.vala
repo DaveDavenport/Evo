@@ -12,7 +12,7 @@ namespace DNA
         public uint generation = 0;
         /* posibilities */
         private const int mutation_pos_add = 200;
-        private const int mutation_pos_remove = 1500;
+        private const int mutation_pos_remove = 500;
 
         private const int initial_polygons = 3;
         public List<DNA.Polygon> polygons;

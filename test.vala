@@ -7,32 +7,27 @@ using GLib;
 using Gdk;
 Gdk.Pixbuf pb_ori=null;
 
-
+uint number_threads = 6;
 
 namespace DNA
 {
-    public int number_of_mutations = 2;
-    namespace Threada
+    public class Worker
     {
-        public GLib.AsyncQueue<DNA.Strain> input = null;
-        public GLib.AsyncQueue<DNA.Strain> output= null;
+	    public GLib.AsyncQueue<DNA.Strain> input = null;
+	    public GLib.AsyncQueue<DNA.Strain> output= null;
 
+	    public Worker()
+	    {
+    		input = new AsyncQueue<DNA.Strain>();
+		    output = new AsyncQueue<DNA.Strain>();
+			create_threads();
+
+		}
         public void * thread_func()
         {
             while(true)
             {
                 DNA.Strain a = input.pop();
-                /*
-                double fitness = 1;//a.fitness;
-                for(int i =0; i < number_of_mutations;i++) 
-                {
-                    DNA.Strain c = new DNA.Strain.Clone(a);
-                    while(!c.Mutate());
-                    DNA.Tool.Fitness(c,pb_ori);
-                    if(c.fitness < fitness) {
-                        a = c;
-                    }
-                }*/
                 while(!a.Mutate());
                 DNA.Tool.Fitness(a, pb_ori);
                 output.push((owned)a);
@@ -40,22 +35,16 @@ namespace DNA
         }
 
         public void create_threads()
-        {
-    		DNA.Threada.input = new AsyncQueue<DNA.Strain>();
-		    DNA.Threada.output = new AsyncQueue<DNA.Strain>();
-            try{
-                Thread.create<void*> (thread_func, true);
-                Thread.create<void*> (thread_func, true);
-                Thread.create<void*> (thread_func, true);
-                Thread.create<void*> (thread_func, true);
-                Thread.create<void*> (thread_func, true);
-                Thread.create<void*> (thread_func, true);
-                Thread.create<void*> (thread_func, true);
-                Thread.create<void*> (thread_func, true);
-            }catch(ThreadError e) {
-                GLib.error("Failed to create thread: %s", e.message);
-            }
-        }
+		{
+				try{
+						for(uint i=0; i<number_threads;i++)
+						{
+								Thread.create<void*> (thread_func, true);
+						}
+				}catch(ThreadError e) {
+						GLib.error("Failed to create thread: %s", e.message);
+				}
+		}
 
     }
     namespace Tool
@@ -117,6 +106,7 @@ string initial_xml = null;
 string render_xml = null;
 const GLib.OptionEntry[] entries = {
 		{"input",   'i', 0, GLib.OptionArg.FILENAME, ref input_file, "Input file", null},
+		{"threads", 'j', 0, GLib.OptionArg.INT, ref number_threads, "Number of CPU threads to run", null},
 		{"population",   'p', 0, GLib.OptionArg.INT, ref population_size, "Size of the popution (default 16)", null},
 		{"initial",   'n', 0, GLib.OptionArg.FILENAME, ref initial_xml, "Initial file", null},
 		{"render",   'r', 0, GLib.OptionArg.FILENAME, ref render_xml, "Render file", null},
@@ -163,7 +153,8 @@ int main ( string[] argv)
     }
     
     /* Create threads */
-    DNA.Threada.create_threads();
+	DNA.Worker w  = new DNA.Worker();
+
 
     GLib.Timer timer = new GLib.Timer();
     DNA.Tool.rand = new GLib.Rand();
@@ -182,13 +173,13 @@ int main ( string[] argv)
     for(int i=0; i < population_size; i++)
     {
         var str2 = new DNA.Strain.Clone(str);
-        DNA.Threada.input.push((owned)str2);
+        w.input.push((owned)str2);
         generation++;
     }
 
     do
     {
-        DNA.Strain a = DNA.Threada.output.pop();
+        DNA.Strain a = w.output.pop();
         if(a.fitness < old_fitness)
         {
             old_fitness = a.fitness;
@@ -210,7 +201,7 @@ int main ( string[] argv)
         }
         var str2 = new DNA.Strain.Clone(str);
         {
-            DNA.Threada.input.push((owned)str2);
+            w.input.push((owned)str2);
             length++;
             generation++;
         }

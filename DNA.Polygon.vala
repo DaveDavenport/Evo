@@ -6,8 +6,8 @@ namespace DNA
 {
     public class Polygon
     {
-        private const int mutation_pos_add = 700;
-        private const int mutation_pos_remove = 1500;
+        private const int mutation_pos_add = 200;
+        private const int mutation_pos_remove = 500;
         private const int initial_points = 3;
         public List<DNA.Point> points;
         public unowned List<DNA.Point> last_point= null;
