@@ -8,7 +8,8 @@ VALA_SOURCES=\
 		PPM.vala
 
 VALAC=valac
-VALAC_FLAGS=--pkg=libxml-2.0 --pkg=gdk-pixbuf-2.0 -X "-O3" -X "--fast-math" -g
+VALAC_FLAGS=--pkg=libxml-2.0 --pkg=gdk-pixbuf-2.0 -X "-O4" -X "--fast-math" -X "-funsafe-math-optimizations" -X "-funsafe-math-optimizations" -X "-funroll-loops" -X "-fprefetch-loop-arrays" 
+# -X "-march=amdfam10"
 PROGRAM=evo
 
 $(PROGRAM): $(VALA_SOURCES) Makefile
