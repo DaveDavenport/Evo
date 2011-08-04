@@ -8,7 +8,7 @@ namespace DNA
     /* The complete DNA strain */
     public class Strain
     {
-        public uint64 fitness = 0;
+        public double fitness = 0;
         /* posibilities */
         private const int mutation_pos_add = 200;
         private const int mutation_pos_remove = 1500;
@@ -119,7 +119,7 @@ namespace DNA
             Xml.Doc doc = new Xml.Doc(null);
             Xml.Node *root = new Xml.Node(null, "strain");
             Xml.Node *fitn = new Xml.Node(null, "fitness");
-            fitn->set_content("%llu".printf(fitness));
+            fitn->set_content("%f".printf(fitness));
 
             foreach(unowned Polygon p in polygons)
             {
@@ -147,7 +147,7 @@ namespace DNA
                 }
                 else if (iter->name == "fitness")
                 {
-                    fitness = int.parse(iter->get_content());
+                    fitness = double.parse(iter->get_content());
                 }
             }
             polygons.reverse();
