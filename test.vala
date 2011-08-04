@@ -97,10 +97,12 @@ namespace DNA
 string input_file = null;
 int population_size = 16;
 string initial_xml = null;
+string render_xml = null;
 const GLib.OptionEntry[] entries = {
 		{"input",   'i', 0, GLib.OptionArg.FILENAME, ref input_file, "Input file", null},
 		{"population",   'p', 0, GLib.OptionArg.INT, ref population_size, "Size of the popution (default 16)", null},
 		{"initial",   'n', 0, GLib.OptionArg.FILENAME, ref initial_xml, "Initial file", null},
+		{"render",   'r', 0, GLib.OptionArg.FILENAME, ref render_xml, "Render file", null},
 
 		{null}
 }; 
@@ -119,6 +121,15 @@ int main ( string[] argv)
 	}catch (Error e) {
 		GLib.error("Failed to parse command line options: %s\n", e.message);
 	}
+
+    if(render_xml != null) {
+        if(initial_xml == null){
+            GLib.error("initial_file == null: You need to specify an initial file");
+        }
+        var str = new DNA.Strain.from_file(initial_xml);
+        PPM.Write(str, render_xml, 800,800);
+        return 0;
+    }
 
 	if(input_file == null) {
 		GLib.error("input_file == null: You need to specify an input file");

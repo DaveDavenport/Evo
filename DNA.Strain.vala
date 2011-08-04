@@ -25,7 +25,7 @@ namespace DNA
         {
             for(int j=0; j<initial_polygons;j++)
             {
-                AddPolygon(new Polygon());
+                AddPolygon(new Polygon.Random());
             }
         }
 
@@ -72,7 +72,7 @@ namespace DNA
             /* Mutate Add a polygon */
             if(DNA.Tool.Mutate(mutation_pos_add))
             {
-                AddPolygon(new Polygon());
+                AddPolygon(new Polygon.Random());
                 dirt = true;
             }
             /* Mutate each polygon */
@@ -143,7 +143,6 @@ namespace DNA
             {
                 if(iter->name == "polygon")
                 {
-                    stdout.printf("add polygon\n");
                     var pol = new Polygon.from_xml(iter);
                     AddPolygon(pol);
                 }

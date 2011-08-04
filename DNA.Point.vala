@@ -28,7 +28,6 @@ namespace DNA
                     y = (float)double.parse(iter->get_content());
                 }
             }
-            stdout.printf("%fx%f\n", x, y);
         }
 
         public void store_xml(Xml.Node *node)
@@ -44,7 +43,7 @@ namespace DNA
             node->add_child(point);
         }
 
-        public Point()
+        public Point.Random()
         {
             x = (float)DNA.Tool.rand.double_range(0, 1);
             y = (float)DNA.Tool.rand.double_range(0, 1);

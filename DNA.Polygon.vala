@@ -10,6 +10,7 @@ namespace DNA
         private const int mutation_pos_remove = 1500;
         private const int initial_points = 3;
         public List<DNA.Point> points;
+        public unowned List<DNA.Point> last_point= null;
         public DNA.Point top = new DNA.Point();
         public DNA.Point bottom = new DNA.Point();
         private Brush brush;
@@ -31,17 +32,16 @@ namespace DNA
             {
                 if(iter->name == "point")
                 {
-                    stdout.printf("add point\n");
                     DNA.Point point = new DNA.Point.from_xml(iter);
                     AddPoint(point);
                 }
                 else if (iter->name == "brush")
                 {
-                    stdout.printf("add brush\n");
                     DNA.Brush b = new DNA.Brush.from_xml(iter);
                     brush = b;
                 }
             }
+            last_point = points;
             points.reverse();
             update_bb();
         }
@@ -69,13 +69,14 @@ namespace DNA
         /**
          * Constructor
          */
-        public Polygon()
+        public Polygon.Random()
         {
-            brush = new Brush();
+            brush = new Brush.Random();
             for(int j=0;j<initial_points;j++)
             {
-                AddPoint(new DNA.Point());
+                AddPoint(new DNA.Point.Random());
             }
+            last_point = points;
             points.reverse();
             update_bb();
         }
@@ -103,6 +104,7 @@ namespace DNA
             top.y = pol.top.y;
             bottom.x = pol.bottom.x;
             bottom.y = pol.bottom.y;
+            last_point = points;
             points.reverse();
         }
 
@@ -126,6 +128,7 @@ namespace DNA
                 points.delete_link(en);
                 pol = null;
             }
+            last_point = points.last();
         }
         /**
          * Mutate
@@ -134,15 +137,15 @@ namespace DNA
         {
             bool dirt = false;
 
-            if(false && DNA.Tool.Mutate(mutation_pos_add))
+            if(DNA.Tool.Mutate(mutation_pos_add))
             {
-                AddPoint(new Point());
+                AddPoint(new Point.Random());
                 dirt = true;
             }
             List<Point> remove_list = null;
             foreach(unowned DNA.Point P in points)
             {
-                if(false && DNA.Tool.Mutate(mutation_pos_remove))
+                if(DNA.Tool.Mutate(mutation_pos_remove))
                 {
                     remove_list.prepend(P);
                 }

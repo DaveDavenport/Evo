@@ -20,7 +20,7 @@ namespace DNA
         public uint8 b;
         public float a;
         /* construct */
-        public Brush()
+        public Brush.Random()
         {
             r = (uint8)DNA.Tool.rand.int_range(0, 1);
             g = (uint8)DNA.Tool.rand.int_range(0, 255);
@@ -57,7 +57,6 @@ namespace DNA
                     a = (float)double.parse(iter->get_content());
                 }
             }
-            stdout.printf("%u %u %u - %f\n", r,g,b,a);
         }
 
         public bool Mutate()
