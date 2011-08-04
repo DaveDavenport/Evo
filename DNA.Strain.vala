@@ -8,7 +8,7 @@ namespace DNA
     /* The complete DNA strain */
     public class Strain
     {
-        public double fitness = 0;
+        public double fitness = 1;
         public uint generation = 0;
         /* posibilities */
         private const int mutation_pos_add = 200;
@@ -122,13 +122,14 @@ namespace DNA
             Xml.Node *fitn = new Xml.Node(null, "fitness");
             Xml.Node *genr = new Xml.Node(null, "generation");
             fitn->set_content("%f".printf(fitness));
-            genr->set_content("%f".printf(generation));
+            genr->set_content("%u".printf(generation));
             foreach(unowned Polygon p in polygons)
             {
                 p.store_xml(root);
             }
 
             root->add_child(fitn);
+            root->add_child(genr);
             doc.set_root_element(root);
             doc.save_format_file(xml_file,1);
         }

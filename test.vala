@@ -7,8 +7,11 @@ using GLib;
 using Gdk;
 Gdk.Pixbuf pb_ori=null;
 
+
+
 namespace DNA
 {
+    public int number_of_mutations = 2;
     namespace Threada
     {
         public GLib.AsyncQueue<DNA.Strain> input = null;
@@ -19,8 +22,19 @@ namespace DNA
             while(true)
             {
                 DNA.Strain a = input.pop();
+                /*
+                double fitness = 1;//a.fitness;
+                for(int i =0; i < number_of_mutations;i++) 
+                {
+                    DNA.Strain c = new DNA.Strain.Clone(a);
+                    while(!c.Mutate());
+                    DNA.Tool.Fitness(c,pb_ori);
+                    if(c.fitness < fitness) {
+                        a = c;
+                    }
+                }*/
                 while(!a.Mutate());
-                DNA.Tool.Fitness(a,pb_ori);
+                DNA.Tool.Fitness(a, pb_ori);
                 output.push((owned)a);
             }
         }
@@ -30,6 +44,9 @@ namespace DNA
     		DNA.Threada.input = new AsyncQueue<DNA.Strain>();
 		    DNA.Threada.output = new AsyncQueue<DNA.Strain>();
             try{
+                Thread.create<void*> (thread_func, true);
+                Thread.create<void*> (thread_func, true);
+                Thread.create<void*> (thread_func, true);
                 Thread.create<void*> (thread_func, true);
                 Thread.create<void*> (thread_func, true);
                 Thread.create<void*> (thread_func, true);
