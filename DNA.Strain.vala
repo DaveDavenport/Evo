@@ -11,8 +11,8 @@ namespace DNA
         public double fitness = 1;
         public uint generation = 0;
         /* posibilities */
-        private const int mutation_pos_add = 200;
-        private const int mutation_pos_remove = 500;
+        private const int mutation_pos_add = 500;
+        private const int mutation_pos_remove = 1000;
 
         private const int initial_polygons = 3;
         public List<DNA.Polygon> polygons;

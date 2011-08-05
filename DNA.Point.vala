@@ -10,8 +10,8 @@ namespace DNA
      */
     public class Point
     {
-        private const int mutation_pos_x = 500;
-        private const int mutation_pos_y = 500;
+        private const int mutation_pos_x = 1000;
+        private const int mutation_pos_y = 1000;
         public float x=0;
         public float y=0;
 

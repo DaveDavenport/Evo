@@ -11,10 +11,10 @@ namespace DNA
 
     public class Brush
     {
-        private const int mutation_pos_r = 200;
-        private const int mutation_pos_g = 200;
-        private const int mutation_pos_b = 200;
-        private const int mutation_pos_a = 200;
+        private const int mutation_pos_r = 1200;
+        private const int mutation_pos_g = 1200;
+        private const int mutation_pos_b = 1200;
+        private const int mutation_pos_a = 1200;
         public uint8 r;
         public uint8 g;
         public uint8 b;
