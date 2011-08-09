@@ -102,6 +102,8 @@ namespace DNA
 
 string input_file = null;
 int population_size = 16;
+int output_width=0;
+int output_height=0;
 string initial_xml = null;
 string render_xml = null;
 const GLib.OptionEntry[] entries = {
@@ -110,9 +112,10 @@ const GLib.OptionEntry[] entries = {
 		{"population",   'p', 0, GLib.OptionArg.INT, ref population_size, "Size of the popution (default 16)", null},
 		{"initial",   'n', 0, GLib.OptionArg.FILENAME, ref initial_xml, "Initial file", null},
 		{"render",   'r', 0, GLib.OptionArg.FILENAME, ref render_xml, "Render file", null},
-
+		{"width", 	'w' , 0, GLib.OptionArg.INT, ref output_width, "Output width", null},
+		{"height", 	'h' , 0, GLib.OptionArg.INT, ref output_height, "Output height", null},
 		{null}
-}; 
+};
 
 int main ( string[] argv)
 {
@@ -134,7 +137,7 @@ int main ( string[] argv)
             GLib.error("initial_file == null: You need to specify an initial file");
         }
         var str = new DNA.Strain.from_file(initial_xml);
-        PPM.Write(str, render_xml, 800,800);
+        PPM.Write(str, render_xml, output_width,output_height);
         return 0;
     }
 
@@ -151,7 +154,11 @@ int main ( string[] argv)
     {
         GLib.error("Failed to load input image: %s\n", error.message);
     }
-    
+
+	if(output_height == 0 || output_width == 0) {
+		output_height = pb_ori.height;
+		output_width = pb_ori.width;
+	}
     /* Create threads */
 	DNA.Worker w  = new DNA.Worker();
 
@@ -164,11 +171,11 @@ int main ( string[] argv)
         str = new DNA.Strain.from_file(initial_xml);
         old_fitness = str.fitness;
         iter = str.generation;
-        PPM.Write(str, "xmlinput.ppm", 800,800);
+        PPM.Write(str, "xmlinput.ppm", output_width,output_height);
     }else{
         str = new DNA.Strain();
     }
-    
+
     int length  = 0;
     for(int i=0; i < population_size; i++)
     {
@@ -187,9 +194,9 @@ int main ( string[] argv)
             str = (owned)a;
             iter++;
             if(iter % 100 == 0)
-            {   
+            {
             	str.store_xml("test%08lu.xml".printf(iter), iter);
-				PPM.Write(str, "test%08lu.ppm".printf(iter), 800,800);
+				PPM.Write(str, "test%08lu.ppm".printf(iter),output_width,output_height);
                 GLib.debug("Write file: test%08lu.png".printf(iter));
                 GLib.debug("Write res: %llu fittn: %f\n", generation, old_fitness);
                 GLib.debug("Time: %f, fpsL: %f", timer.elapsed(), (generation-old_generation)/timer.elapsed());
@@ -206,15 +213,13 @@ int main ( string[] argv)
             generation++;
         }
     }while(old_fitness > 0.0001);
-    
+
     /* We are done */
 	str.store_xml("test%08lu.xml".printf(iter),iter);
-	PPM.Write(str, "test%08lu.ppm".printf(iter), 800,800);
+	PPM.Write(str, "test%08lu.ppm".printf(iter), output_width,output_height);
 
     str.print();
 
     pb_ori = null;
     return 0;
 }
-
-

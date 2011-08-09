@@ -6,7 +6,7 @@ namespace PPM
 {
 	public void Write(DNA.Strain strain,string filename, uint width, uint height)
 	{
-     	uchar[width*height*3] pixels = new uchar[800*800*3];
+     	uchar[width*height*3] pixels = new uchar[width*height*3];
         DNA.Render(strain, pixels, width, height,3);
 		GLib.FileStream fs = GLib.FileStream.open(filename, "w");
     	fs.printf("P6\n%u %u %u\n", width, height, 255);
