@@ -8,8 +8,10 @@ namespace DNA
     {
         private const int mutation_pos_add =700;
         private const int mutation_pos_remove = 1500;
+		private const int max_points = 20;
         private const int initial_points = 3;
         public List<DNA.Point> points;
+		private int num_points = 0;
         public unowned List<DNA.Point> last_point= null;
         public DNA.Point top = new DNA.Point();
         public DNA.Point bottom = new DNA.Point();
@@ -114,6 +116,7 @@ namespace DNA
         public void AddPoint(Point p)
         {
             points.prepend(p);
+			num_points++;
         }
 
         /**
@@ -129,7 +132,8 @@ namespace DNA
                 pol = null;
             }
             last_point = points.last();
-        }
+			num_points--;
+		}
         /**
          * Mutate
          */
@@ -137,7 +141,7 @@ namespace DNA
         {
             bool dirt = false;
 
-            if(DNA.Tool.Mutate(mutation_pos_add))
+            if(num_points < max_points && DNA.Tool.Mutate(mutation_pos_add))
             {
                 AddPoint(new Point.Random());
                 dirt = true;

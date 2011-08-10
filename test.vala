@@ -136,9 +136,16 @@ int main ( string[] argv)
         if(initial_xml == null){
             GLib.error("initial_file == null: You need to specify an initial file");
         }
-        var str = new DNA.Strain.from_file(initial_xml);
-        PPM.Write(str, render_xml, output_width,output_height);
-        return 0;
+		
+		var str = new DNA.Strain.from_file(initial_xml);
+		GLib.Timer timer = new GLib.Timer();
+		uchar[] pixels = new uchar[output_width*output_height*3];
+		for(int i =1; i < 2; i++){
+			DNA.Render(str, pixels, output_width, output_height);
+		}
+		stdout.printf("Rendering took: %lf\n", timer.elapsed());
+		PPM.Write(str, render_xml, output_width,output_height);
+		return 0;
     }
 
 	if(input_file == null) {
