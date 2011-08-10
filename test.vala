@@ -140,11 +140,11 @@ int main ( string[] argv)
 		var str = new DNA.Strain.from_file(initial_xml);
 		GLib.Timer timer = new GLib.Timer();
 		uchar[] pixels = new uchar[output_width*output_height*3];
-		for(int i =1; i < 2; i++){
+		for(int i =0; i < 10; i++){
 			DNA.Render(str, pixels, output_width, output_height);
 		}
 		stdout.printf("Rendering took: %lf\n", timer.elapsed());
-		PPM.Write(str, render_xml, output_width,output_height);
+		DNA.RenderSVG(render_xml, str, output_width, output_height);
 		return 0;
     }
 
@@ -178,7 +178,6 @@ int main ( string[] argv)
         str = new DNA.Strain.from_file(initial_xml);
         old_fitness = str.fitness;
         iter = str.generation;
-        PPM.Write(str, "xmlinput.ppm", output_width,output_height);
     }else{
         str = new DNA.Strain();
     }
@@ -203,7 +202,8 @@ int main ( string[] argv)
             if(iter % 100 == 0)
             {
             	str.store_xml("test%08lu.xml".printf(iter), iter);
-				PPM.Write(str, "test%08lu.ppm".printf(iter),output_width,output_height);
+				DNA.RenderSVG("test%08u.svg".printf(iter), str, output_width, output_height);
+				//PPM.Write(str, "test%08lu.ppm".printf(iter),output_width,output_height);
                 GLib.debug("Write file: test%08lu.png".printf(iter));
                 GLib.debug("Write res: %llu fittn: %f\n", generation, old_fitness);
                 GLib.debug("Time: %f, fpsL: %f", timer.elapsed(), (generation-old_generation)/timer.elapsed());
@@ -223,7 +223,7 @@ int main ( string[] argv)
 
     /* We are done */
 	str.store_xml("test%08lu.xml".printf(iter),iter);
-	PPM.Write(str, "test%08lu.ppm".printf(iter), output_width,output_height);
+	DNA.RenderSVG("test%08u.svg".printf(iter), str, output_width, output_height);
 
     str.print();
 

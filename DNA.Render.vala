@@ -1,12 +1,40 @@
 using GLib;
 using Gdk;
 using Xml;
+using Cairo;
 
 namespace DNA
 {
+	public void RenderSVG(string filename, DNA.Strain strain, uint width, uint height)
+	{
+		var surf = new Cairo.SvgSurface(filename, width, height);
+		var ct = new Context(surf);
+		ct.set_source_rgba(0,0,0,1);
+		ct.paint();
+		ct.scale((double)width,(double)width);
+		foreach(unowned DNA.Polygon pol in strain.polygons)
+		{
+			if(pol.points == null) break;
+			unowned DNA.Brush b  = pol.GetBrush();
+			ct.set_source_rgba(b.r/255.0,b.g/255.0,b.b/255.0,b.a);
+			bool init = true;
+			foreach(unowned DNA.Point node in pol.points)
+			{
+				if(init) {
+					ct.move_to(node.x, node.y);
+					init = false;
+				}else{
+					ct.line_to(node.x, node.y);
+				}
+			}
+			ct.fill();
+		}
+		surf.finish();
+		surf.flush();
+	}
 	public void Render(DNA.Strain strain, uchar[] pixels, uint width, uint height, uint nchan=3)
 	{
-		uint[] cpoints = new uint[256];
+		uint[] cpoints = new uint[64];
 		uint stride = width*nchan;
 		/* Clear */
 		GLib.Memory.set(pixels, 0, stride*height);
@@ -24,7 +52,6 @@ namespace DNA
 
 			uint y_min = (uint)(pol.top.y*height);
 			uint y_max = (uint)(pol.bottom.y*height);
-			uint swap;
 			//  Loop through the rows of the image.
 			for (uint y= y_min; y<y_max; y++) 
 			{
@@ -34,8 +61,10 @@ namespace DNA
 				unowned DNA.Point lp = pol.last_point.data;
 				foreach(unowned DNA.Point node in pol.points)
 				{
-					if ((node.y < pixely && lp.y >= pixely) ||  
-						(lp.y < pixely && node.y>= pixely))
+					if (
+							(lp.y < pixely && node.y>= pixely) ||
+							(node.y < pixely && lp.y >= pixely)   
+						)
 					{
 						cpoints[nodes++]= (uint)(width*(node.x+(pixely-node.y)/(lp.y-node.y)*(lp.x-node.x))); 
 					}
@@ -43,25 +72,25 @@ namespace DNA
 				}
 				if(nodes > 0)
 				{
+					uint uy = y*stride;
+					uint8 i=0;
 					//  sort the nodes, via a simple “bubble” sort.
-					int i=0;
 					while (i<nodes-1) {
 						if (cpoints[i]>cpoints[i+1]) {
-							swap=cpoints[i];
+							uint swap=cpoints[i];
 							cpoints[i]=cpoints[i+1];
 							cpoints[i+1]=swap;
 							if (i > 0) i--; 
 						}
-						else {
+						else 
 							i++; 
-						}
 					}
 					//  fill the pixels between node pairs.
 					for (i=0; i<nodes; i+=2)
 					{
 						for (uint j=cpoints[i]; j<cpoints[i+1]; j++)
 						{
-							uint index = y*stride+(uint)j*nchan;
+							uint index = uy+(uint)j*nchan;
 							pixels[index] =   (uchar)(br +(ba)*(pixels[index]  ));
 							pixels[index+1] = (uchar)(bg +(ba)*(pixels[index+1]));
 							pixels[index+2] = (uchar)(bb +(ba)*(pixels[index+2]));
