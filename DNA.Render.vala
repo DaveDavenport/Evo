@@ -5,13 +5,12 @@ using Cairo;
 
 namespace DNA
 {
-	public void RenderSVG(string filename, DNA.Strain strain, uint width, uint height)
+	private void draw (Cairo.Surface surf,DNA.Strain strain, uint width, uint height)
 	{
-		var surf = new Cairo.SvgSurface(filename, width, height);
 		var ct = new Context(surf);
 		ct.set_source_rgba(0,0,0,1);
 		ct.paint();
-		ct.scale((double)width,(double)width);
+		ct.scale((double)width,(double)height);
 		foreach(unowned DNA.Polygon pol in strain.polygons)
 		{
 			if(pol.points == null) break;
@@ -29,9 +28,24 @@ namespace DNA
 			}
 			ct.fill();
 		}
+	}
+	public void RenderSVG(string filename, DNA.Strain strain, uint width, uint height)
+	{
+		var surf = new Cairo.SvgSurface(filename, width, height);
+		draw(surf,strain, width,height);
 		surf.finish();
 		surf.flush();
 	}
+	public void RenderPNG(string filename, DNA.Strain strain, uint width, uint height)
+	{
+		var surf = new Cairo.ImageSurface(Cairo.Format.RGB24, (int)width, (int)height);
+		GLib.debug("Write to png: %s", filename);
+		draw(surf,strain, width,height);
+		surf.write_to_png(filename);
+		surf.finish();
+		surf.flush();
+	}
+
 	public void Render(DNA.Strain strain, uchar[] pixels, uint width, uint height, uint nchan=3)
 	{
 		uint[] cpoints = new uint[64];

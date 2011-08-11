@@ -106,6 +106,7 @@ int output_width=0;
 int output_height=0;
 string initial_xml = null;
 string render_xml = null;
+bool output_png = false;
 const GLib.OptionEntry[] entries = {
 		{"input",   'i', 0, GLib.OptionArg.FILENAME, ref input_file, "Input file", null},
 		{"threads", 'j', 0, GLib.OptionArg.INT, ref number_threads, "Number of CPU threads to run", null},
@@ -114,6 +115,7 @@ const GLib.OptionEntry[] entries = {
 		{"render",   'r', 0, GLib.OptionArg.FILENAME, ref render_xml, "Render file", null},
 		{"width", 	'w' , 0, GLib.OptionArg.INT, ref output_width, "Output width", null},
 		{"height", 	'h' , 0, GLib.OptionArg.INT, ref output_height, "Output height", null},
+		{"output-png", 	0 , 0, GLib.OptionArg.NONE, ref output_png, "Output png instead of svg", null},
 		{null}
 };
 
@@ -144,7 +146,11 @@ int main ( string[] argv)
 			DNA.Render(str, pixels, output_width, output_height);
 		}
 		stdout.printf("Rendering took: %lf\n", timer.elapsed());
-		DNA.RenderSVG(render_xml, str, output_width, output_height);
+		if(output_png) {
+			DNA.RenderPNG(render_xml, str, output_width, output_height);
+		}else{
+			DNA.RenderSVG(render_xml, str, output_width, output_height);
+		}
 		return 0;
     }
 
