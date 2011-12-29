@@ -138,8 +138,8 @@ namespace DNA
          */
         public Strain.from_file(string xml_file)
         {
-            Xml.Doc doc = Xml.Parser.parse_file(xml_file);
-            Xml.Node *root = doc.get_root_element();
+            Xml.Doc *doc = Xml.Parser.parse_file(xml_file);
+            Xml.Node *root = doc->get_root_element();
             for(Xml.Node *iter =  root->children; iter != null; iter = iter->next)
             {
                 if(iter->name == "polygon")
@@ -156,6 +156,8 @@ namespace DNA
                 }
             }
             polygons.reverse();
+			delete doc;
+			Xml.Parser.cleanup();
         }
     }
 

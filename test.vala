@@ -140,12 +140,6 @@ int main ( string[] argv)
         }
 		
 		var str = new DNA.Strain.from_file(initial_xml);
-		GLib.Timer timer = new GLib.Timer();
-		uchar[] pixels = new uchar[output_width*output_height*3];
-		for(int i =0; i < 10; i++){
-			DNA.Render(str, pixels, output_width, output_height);
-		}
-		stdout.printf("Rendering took: %lf\n", timer.elapsed());
 		if(output_png) {
 			DNA.RenderPNG(render_xml, str, output_width, output_height);
 		}else{
