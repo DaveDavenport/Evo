@@ -105,9 +105,9 @@ namespace DNA
 						for (uint j=cpoints[i]; j<cpoints[i+1]; j++)
 						{
 							uint index = uy+(uint)j*nchan;
-							pixels[index] =   (uchar)(br +(ba)*(pixels[index]  ));
-							pixels[index+1] = (uchar)(bg +(ba)*(pixels[index+1]));
-							pixels[index+2] = (uchar)(bb +(ba)*(pixels[index+2]));
+							pixels[index] =   (uchar)(br +ba*(pixels[index]  ));
+							pixels[index+1] = (uchar)(bg +ba*(pixels[index+1]));
+							pixels[index+2] = (uchar)(bb +ba*(pixels[index+2]));
 						}
 					}
 				}
